@@ -56,7 +56,8 @@ class Register extends Component {
             email: '',
             password: '',
             password2: '',
-            errors: {}
+            errors: {},
+            loading: false
         }
     }
 
@@ -69,7 +70,9 @@ class Register extends Component {
     submitHandler = (e) => {
         e.preventDefault();
         console.log('clicked');
-        console.log('clicked');
+        this.setState({
+            loading: true
+        })
         const registerData = {
             name: this.state.name,
             email: this.state.email,
@@ -85,12 +88,16 @@ class Register extends Component {
         })
             .then(res => {
                 console.log(res.data);
+                this.setState({
+                    loading: true
+                })
                 this.props.history.push('/login');
             })
             .catch(err => {
                 console.log(err.response.data);
                 this.setState({
-                    errors: (err.response.data)
+                    errors: (err.response.data),
+                    loading: false
                 });
             });
     }
@@ -100,7 +107,7 @@ class Register extends Component {
 
     render() {
         const { classes } = this.props;
-        const { errors } = this.state;
+        const { errors, loading } = this.state;
 
         return (
             <main className={classes.main}>
@@ -113,29 +120,29 @@ class Register extends Component {
                         Sign Up
         </Typography>
                     <form onSubmit={this.submitHandler} className={classes.form}>
-                        <FormControl margin="normal" required fullWidth>
+                        <FormControl margin="normal" fullWidth>
                             <InputLabel htmlFor="name">Name</InputLabel>
                             <Input id="name" name="name" autoComplete="name" autoFocus onChange={this.handleChange} />
                             {errors.name && <Typography variant="caption" color="error">
                                 {errors.name}
                             </Typography>}
                         </FormControl>
-                        <FormControl margin="normal" required fullWidth>
+                        <FormControl margin="normal" fullWidth>
                             <InputLabel htmlFor="email">Email Address</InputLabel>
                             <Input id="email" name="email" autoComplete="email" onChange={this.handleChange} />
                             {errors.email && <Typography variant="caption" color="error">
                                 {errors.email}
                             </Typography>}
                         </FormControl>
-                        <FormControl margin="normal" required fullWidth>
+                        <FormControl margin="normal" fullWidth>
                             <InputLabel htmlFor="password">Password</InputLabel>
                             <Input name="password" type="password" id="password" autoComplete="current-password" onChange={this.handleChange} />
                             {errors.password && <Typography variant="caption" color="error">
                                 {errors.password}
                             </Typography>}
                         </FormControl>
-                        <FormControl margin="normal" required fullWidth>
-                            <InputLabel htmlFor="password2">Repeat Password</InputLabel>
+                        <FormControl margin="normal" fullWidth>
+                            <InputLabel htmlFor="password2">Confirm Password</InputLabel>
                             <Input name="password2" type="password" id="password2" autoComplete="current-password" onChange={this.handleChange} />
                             {errors.password2 && <Typography variant="caption" color="error">
                                 {errors.password2}
@@ -146,6 +153,7 @@ class Register extends Component {
                             fullWidth
                             variant="contained"
                             color="primary"
+                            disableRipple={loading}
                             className={classes.submit}
                         >
                             Sign Up

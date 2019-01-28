@@ -55,7 +55,8 @@ class SignIn extends Component {
     state = {
         email: '',
         password: '',
-        errors: {}
+        errors: {},
+        loading: false
     }
 
     static contextType = AuthContext;
@@ -69,6 +70,9 @@ class SignIn extends Component {
     submitHandler = (e) => {
         e.preventDefault();
         console.log('clicked');
+        this.setState({
+            loading: true
+        })
         const loginData = {
             email: this.state.email,
             password: this.state.password,
@@ -81,13 +85,17 @@ class SignIn extends Component {
             .then(res => {
                 console.log(res.data);
                 if (res.data.token) {
-                    this.context.login(res.data.token)
+                    this.context.login(res.data.token);
+                    this.setState({
+                        loading: false
+                    })
                 }
             })
             .catch(err => {
                 console.log(err.response.data);
                 this.setState({
-                    errors: (err.response.data)
+                    errors: (err.response.data),
+                    loading: false
                 });
             });
     }
@@ -98,7 +106,7 @@ class SignIn extends Component {
 
     render() {
         const { classes } = this.props;
-        const { errors } = this.state;
+        const { errors, loading } = this.state;
         return (
             <main className={classes.main}>
                 <CssBaseline />
@@ -111,14 +119,14 @@ class SignIn extends Component {
         </Typography>
                     <form onSubmit={this.submitHandler} className={classes.form}>
 
-                        <FormControl margin="normal" required fullWidth>
+                        <FormControl margin="normal" fullWidth>
                             <InputLabel htmlFor="email">Email Address</InputLabel>
                             <Input id="email" name="email" autoComplete="email" autoFocus onChange={this.handleChange} />
                             {errors.email && <Typography variant="caption" color="error">
                                 {errors.email}
                             </Typography>}
                         </FormControl>
-                        <FormControl margin="normal" required fullWidth>
+                        <FormControl margin="normal" fullWidth>
                             <InputLabel htmlFor="password">Password</InputLabel>
                             <Input name="password" type="password" id="password" autoComplete="current-password" onChange={this.handleChange} />
                             {errors.password && <Typography variant="caption" color="error">
@@ -134,8 +142,12 @@ class SignIn extends Component {
                             variant="contained"
                             color="primary"
                             className={classes.submit}
+                            disabled={loading}
+                            disableRipple={loading}
+                            disableTouchRipple={loading}
+                            disableFocusRipple={loading}
                         >
-                            Sign in
+                            Login
                         </Button>
                         <Link style={{ textDecoration: 'none' }} to='/register'>
                             <Button
