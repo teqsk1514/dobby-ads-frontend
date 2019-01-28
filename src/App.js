@@ -10,15 +10,18 @@ import AuthContext from './context/auth-context';
 class App extends Component {
 
   state = {
-    token: null,
+    token: localStorage.getItem('token'),
   }
   login = (token) => {
+    const splitedToken = token.split(' ')[1];
+    localStorage.setItem('token', splitedToken)
     this.setState({
-      token: token,
+      token: splitedToken,
     });
   }
 
   logout = () => {
+    localStorage.removeItem('token')
     this.setState({
       token: null,
     });
@@ -36,8 +39,9 @@ class App extends Component {
             <Switch>
               <Redirect from="/" to="/register" exact />
               {this.state.token && <Redirect from="/login" to="/search" exact />}
+              {this.state.token && <Redirect from="/register" to="/search" exact />}
               {this.state.token && <Route path="/search" component={Search} />}
-              <Route path="/login" component={SignIn} />
+              {<Route path="/login" component={SignIn} />}
               <Route path="/register" component={Register} />
               {!this.state.token && <Redirect to="/login" exact />}
             </Switch>
